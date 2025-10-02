@@ -1,0 +1,26 @@
+{
+    "provider": "Gemini",
+    "providers": [
+        {
+            "provider_name": "Gemini",
+            "provider_type": "GeminiAPI",
+            "api_key": "",
+            "model": "gemini-2.5-flash"
+        },
+        {
+            "provider_name": "OpenAI",
+            "provider_type": "OpenAICompatible",
+            "base_url": "https://api.openai.com/v1",
+            "api_key": "",
+            "model": "gpt-5-mini"
+        },
+        {
+            "provider_name": "MoonshotAI",
+            "provider_type": "OpenAICompatible",
+            "base_url": "https://api.moonshot.cn/v1",
+            "api_key": "",
+            "model": "kimi-k2-turbo-preview"
+        }
+    ]
+
+}
