@@ -18,7 +18,12 @@ Que is a lightweight system tray application that enables quick text translation
    cd Que
    ```
 
-2. Install the required dependencies:
+2. Install the required dependencies using `uv` (recommended):
+   ```
+   uv sync
+   ```
+
+   Alternatively, you can use pip:
    ```
    pip install -r requirements.txt
    ```
@@ -64,6 +69,11 @@ Supported providers:
 
 1. Run the application:
    ```
+   uv run python main.py
+   ```
+
+   Alternatively, if you used pip for installation:
+   ```
    python main.py
    ```
 
@@ -83,6 +93,7 @@ When the application is inactive (red dot icon), the `Ctrl+Q` shortcut will not 
 ## Requirements
 
 - Python 3.7+
+- [uv](https://github.com/astral-sh/uv) (recommended) or pip
 - Windows OS (due to [keyboard](https://github.com/boppreh/keyboard) library limitations)
 - Internet connection for translation services
 
