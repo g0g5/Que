@@ -3,15 +3,33 @@ import pystray
 import pyperclip
 from PIL import Image, ImageDraw
 from time import sleep
-from translators.factory import load_translator
+from translators.factory import load_translator, load_language_config, validate_language_config
 import argparse
+import json
 
 # Define a variable to control if the keylogger is active
 is_active = True
 
 # global translator
 translator = load_translator()
-translator_language = "Chinese"
+
+# Load language configuration
+try:
+    language_config = load_language_config()
+    available_languages = language_config['languages']
+    translator_language = language_config['default_language']
+except (FileNotFoundError, json.JSONDecodeError, KeyError) as e:
+    conditional_print(f"Error loading language configuration: {e}")
+    # Fallback to hardcoded languages
+    available_languages = [
+        {"name": "Chinese", "code": "zh", "default": True},
+        {"name": "English", "code": "en"},
+        {"name": "Russian", "code": "ru"},
+        {"name": "Japanese", "code": "ja"},
+        {"name": "Korean", "code": "ko"},
+        {"name": "French", "code": "fr"}
+    ]
+    translator_language = "Chinese"
 
 # Global variable to control quiet mode
 quiet_mode = False
@@ -30,6 +48,32 @@ def set_translator_language(lang):
 def is_current_language(lang):
     """Check if the current language is the same as the target language"""
     return lang == translator_language
+
+
+def get_language_by_name(name: str) -> dict:
+    """Get language configuration by name"""
+    for lang in available_languages:
+        if lang['name'] == name:
+            return lang
+    return None
+
+
+def create_language_menu():
+    """Create dynamic language menu based on configuration"""
+    menu_items = []
+
+    for lang_config in available_languages:
+        lang_name = lang_config['name']
+        menu_items.append(
+            pystray.MenuItem(
+                lang_name,
+                lambda item, name=lang_name: set_translator_language(name),
+                checked=lambda item, name=lang_name: is_current_language(name),
+                default=lang_config.get('default', False) and lang_name == translator_language
+            )
+        )
+
+    return tuple(menu_items)
 
 # --- Hotkey Listener Function ---
 def on_key_press(event):
@@ -134,14 +178,7 @@ def main():
     
     # Create the menu for the tray icon
     menu = (
-        pystray.MenuItem('Languages', pystray.Menu(
-            pystray.MenuItem('Chinese', lambda item: set_translator_language("Chinese"), checked=lambda item: is_current_language("Chinese"), default=True),
-            pystray.MenuItem('English', lambda item: set_translator_language("English"), checked=lambda item: is_current_language("English")),
-            pystray.MenuItem('Russian', lambda item: set_translator_language("Russian"), checked=lambda item: is_current_language("Russian")),
-            pystray.MenuItem('Japanese', lambda item: set_translator_language("Japanese"), checked=lambda item: is_current_language("Japanese")),
-            pystray.MenuItem('Korean', lambda item: set_translator_language("Korean"), checked=lambda item: is_current_language("Korean")),
-            pystray.MenuItem('French', lambda item: set_translator_language("French"), checked=lambda item: is_current_language("French")),
-        )),
+        pystray.MenuItem('Languages', pystray.Menu(*create_language_menu())),
         pystray.Menu.SEPARATOR,
         pystray.MenuItem('Toggle Active', toggle_active),
         pystray.MenuItem('Exit', exit_app),

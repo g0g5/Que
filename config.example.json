@@ -1,5 +1,33 @@
 {
     "provider": "Gemini",
+    "default_language": "Chinese",
+    "languages": [
+        {
+            "name": "Chinese",
+            "code": "zh",
+            "default": true
+        },
+        {
+            "name": "English",
+            "code": "en"
+        },
+        {
+            "name": "Russian",
+            "code": "ru"
+        },
+        {
+            "name": "Japanese",
+            "code": "ja"
+        },
+        {
+            "name": "Korean",
+            "code": "ko"
+        },
+        {
+            "name": "French",
+            "code": "fr"
+        }
+    ],
     "providers": [
         {
             "provider_name": "Gemini",
@@ -22,5 +50,4 @@
             "model": "kimi-k2-turbo-preview"
         }
     ]
-
 }

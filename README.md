@@ -7,6 +7,8 @@ Que is a lightweight system tray application that enables quick text translation
 - System tray application that runs in the background
 - Translate selected text with a simple keyboard shortcut (`Ctrl+Q`)
 - Support for multiple translation providers (Gemini, OpenAI, and compatible APIs)
+- Configurable target languages with customizable defaults
+- Quick language switching through system tray menu
 - Toggle activation on/off through the system tray menu
 - Translated text automatically copied to clipboard for easy pasting
 
@@ -23,11 +25,6 @@ Que is a lightweight system tray application that enables quick text translation
    uv sync
    ```
 
-   Alternatively, you can use pip:
-   ```
-   pip install -r requirements.txt
-   ```
-
 3. Configure your translation provider by copying `config.example.json` to `config.json`:
    ```
    cp config.example.json config.json
@@ -37,11 +34,31 @@ Que is a lightweight system tray application that enables quick text translation
 
 ## Configuration
 
-Edit the `config.json` file to set up your preferred translation service:
+Edit the `config.json` file to set up your preferred translation service and target languages:
 
 ```json
 {
     "provider": "Gemini",
+    "default_language": "Chinese",
+    "languages": [
+        {
+            "name": "Chinese",
+            "code": "zh",
+            "default": true
+        },
+        {
+            "name": "English",
+            "code": "en"
+        },
+        {
+            "name": "Japanese",
+            "code": "ja"
+        },
+        {
+            "name": "Spanish",
+            "code": "es"
+        }
+    ],
     "providers": [
         {
             "provider_name": "Gemini",
@@ -60,6 +77,18 @@ Edit the `config.json` file to set up your preferred translation service:
 }
 ```
 
+### Language Configuration
+
+- **`default_language`**: The language selected when the application starts (must match one of the language names)
+- **`languages`**: Array of available target languages shown in the system tray menu
+  - **`name`**: Display name for the language (required)
+  - **`code`**: Language code (optional, for future API integration)
+  - **`default`**: Mark this language as the default (optional)
+
+You can add, remove, or reorder languages in the `languages` array to customize the menu. If no language configuration is provided, the application will use a default set of languages (Chinese, English, Russian, Japanese, Korean, French).
+
+### Translation Providers
+
 Supported providers:
 - Google Gemini
 - OpenAI
@@ -72,11 +101,6 @@ Supported providers:
    uv run python main.py
    ```
 
-   Alternatively, if you used pip for installation:
-   ```
-   python main.py
-   ```
-
 2. Look for the green dot icon in your system tray, indicating the app is active.
 
 3. To translate text:
@@ -85,6 +109,7 @@ Supported providers:
    - The translated text will automatically be copied to your clipboard
 
 4. Right-click the tray icon to:
+   - Switch between different target languages (configured in `config.json`)
    - Toggle the application on/off
    - Exit the application
 
@@ -92,7 +117,7 @@ When the application is inactive (red dot icon), the `Ctrl+Q` shortcut will not 
 
 ## Requirements
 
-- Python 3.7+
+- Python 3.10 or newer
 - [uv](https://github.com/astral-sh/uv) (recommended) or pip
 - Windows OS (due to [keyboard](https://github.com/boppreh/keyboard) library limitations)
 - Internet connection for translation services
