@@ -1,4 +1,5 @@
 {
+    "hotkey": "ctrl+q",
     "provider": "Gemini",
     "default_language": "Chinese",
     "languages": [

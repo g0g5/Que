@@ -1,11 +1,12 @@
 # Que
 
-Que is a lightweight system tray application that enables quick text translation using keyboard shortcuts. Simply select any text and press `Ctrl+Q` to translate it to your chosen language, with the translated text automatically copied to your clipboard.
+Que is a lightweight system tray application that enables quick text translation using keyboard shortcuts. Simply select any text and press your configured hotkey (default: `Ctrl+Q`) to translate it to your chosen language, with the translated text automatically copied to your clipboard.
 
 ## Features
 
 - System tray application that runs in the background
-- Translate selected text with a simple keyboard shortcut (`Ctrl+Q`)
+- Translate selected text with a configurable keyboard shortcut (default: `Ctrl+Q`)
+- Customizable hotkey configuration in `config.json`
 - Support for multiple translation providers (Gemini, OpenAI, and compatible APIs)
 - Configurable target languages with customizable defaults
 - Quick language switching through system tray menu
@@ -38,6 +39,7 @@ Edit the `config.json` file to set up your preferred translation service and tar
 
 ```json
 {
+    "hotkey": "ctrl+q",
     "provider": "Gemini",
     "default_language": "Chinese",
     "languages": [
@@ -77,6 +79,17 @@ Edit the `config.json` file to set up your preferred translation service and tar
 }
 ```
 
+### Hotkey Configuration
+
+- **`hotkey`**: The keyboard shortcut to trigger translation (default: `"ctrl+q"`)
+  - Format: `"modifier+key"` or `"modifier1+modifier2+key"`
+  - Examples:
+    - `"ctrl+q"` - The default hotkey
+    - `"alt+t"` - Alt + T
+    - `"ctrl+shift+r"` - Ctrl + Shift + R
+  - Supported modifiers: `ctrl`, `alt`, `shift`
+  - The hotkey is case-insensitive
+
 ### Language Configuration
 
 - **`default_language`**: The language selected when the application starts (must match one of the language names)
@@ -105,7 +118,7 @@ Supported providers:
 
 3. To translate text:
    - Select the text you want to translate
-   - Press `Ctrl+Q`
+   - Press your configured hotkey (default: `Ctrl+Q`)
    - The translated text will automatically be copied to your clipboard
 
 4. Right-click the tray icon to:
@@ -113,7 +126,7 @@ Supported providers:
    - Toggle the application on/off
    - Exit the application
 
-When the application is inactive (red dot icon), the `Ctrl+Q` shortcut will not work.
+When the application is inactive (red dot icon), the configured hotkey will not work.
 
 ## Requirements
 

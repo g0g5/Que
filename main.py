@@ -20,6 +20,9 @@ translator = load_translator()
 # Global variable to control quiet mode
 quiet_mode = False
 
+# Global variable for hotkey configuration
+hotkey_config = {"modifiers": ["ctrl"], "key": "q"}
+
 
 def conditional_print(*args, **kwargs):
     """Print function that respects quiet mode setting"""
@@ -44,6 +47,25 @@ except (FileNotFoundError, json.JSONDecodeError, KeyError) as e:
         {"name": "French", "code": "fr"},
     ]
     translator_language = "Chinese"
+
+
+def load_hotkey_config():
+    """Load hotkey configuration from config.json"""
+    try:
+        with open("config.json", "r", encoding="utf-8") as f:
+            config = json.load(f)
+            hotkey_str = config.get("hotkey", "ctrl+q")
+            
+            # Parse hotkey string (e.g., "ctrl+q", "alt+shift+t")
+            parts = hotkey_str.lower().split("+")
+            key = parts[-1]  # Last part is the key
+            modifiers = parts[:-1]  # Everything else is modifiers
+            
+            return {"modifiers": modifiers, "key": key, "display": hotkey_str}
+    except (FileNotFoundError, json.JSONDecodeError, KeyError) as e:
+        conditional_print(f"Error loading hotkey configuration: {e}")
+        # Return default hotkey
+        return {"modifiers": ["ctrl"], "key": "q", "display": "ctrl+q"}
 
 
 def set_translator_language(lang):
@@ -88,8 +110,20 @@ def create_language_menu():
 # --- Hotkey Listener Function ---
 def on_key_press(event):
     """Callback function for key press events."""
-    if is_active and event.name == "q" and keyboard.is_pressed("ctrl"):
-        translate_selected_text()
+    global hotkey_config
+    
+    if not is_active:
+        return
+    
+    # Check if the pressed key matches the configured key
+    if event.name == hotkey_config["key"]:
+        # Check if all configured modifiers are pressed
+        modifiers_pressed = all(
+            keyboard.is_pressed(mod) for mod in hotkey_config["modifiers"]
+        )
+        
+        if modifiers_pressed:
+            translate_selected_text()
 
 
 def translate_selected_text():
@@ -178,7 +212,7 @@ def exit_app(icon, item):
 def main():
     """Main function to set up the tray icon and start the listener."""
 
-    global is_active, quiet_mode
+    global is_active, quiet_mode, hotkey_config
     # Parse command line arguments
     parser = argparse.ArgumentParser(description="Hotkey translation application")
     parser.add_argument(
@@ -192,8 +226,12 @@ def main():
     # Set quiet mode based on argument
     quiet_mode = args.quiet
 
+    # Load hotkey configuration
+    hotkey_config = load_hotkey_config()
+
     # Print startup message if not in quiet mode
-    conditional_print("Application started. Press Ctrl+Q to translate selected text.")
+    hotkey_display = hotkey_config.get("display", "ctrl+q").upper()
+    conditional_print(f"Application started. Press {hotkey_display} to translate selected text.")
     if quiet_mode:
         conditional_print("Quiet mode enabled.")
 
